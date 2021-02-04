@@ -6,6 +6,7 @@
 package dk.dbc.connector.openformat;
 
 import dk.dbc.connector.openformat.model.OpenFormatEntity;
+import dk.dbc.connector.openformat.model.formats.Promat.PromatEntity;
 import dk.dbc.httpclient.FailSafeHttpClient;
 import dk.dbc.httpclient.HttpGet;
 import dk.dbc.invariant.InvariantUtil;
@@ -80,8 +81,10 @@ public class OpenFormatConnector {
                 .withQueryParameter("outputType", "json")
                 .withQueryParameter("pid", String.format("%s-basis:%s", agency, faust));
 
-        LOGGER.info("search took {} ms", stopwatch.getElapsedTime(TimeUnit.MILLISECONDS));
-        return sendGetRequest(httpGet, c);
+
+        T entity = sendGetRequest(httpGet, c);
+        LOGGER.info("Request took {} ms", stopwatch.getElapsedTime(TimeUnit.MILLISECONDS));
+        return entity;
     }
 
     public void close() {

@@ -82,11 +82,15 @@ public class OpenFormatConnectorTest {
             assertThat("faust", formatResponse.getPromat().get(0).getElements().getFaust().toString(), is("24699773"));
             assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().toString(), is("Kꜳrsbøl, Jette A."));
             assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5().toString(), is("sk"));
-            assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn().toString(), is("9788764432589"));
             assertThat("title", formatResponse.getPromat().get(0).getElements().getTitle().toString(), is("Den lukkede bog"));
             assertThat("targetgroup", formatResponse.getPromat().get(0).getElements().getTargetgroup().toString(), is("v"));
             assertThat("extent", formatResponse.getPromat().get(0).getElements().getExtent().toString(), is("21 t., 29 min."));
             assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().toString(), is("Ballerup, Biblioteksmedier, 2011"));
+
+            assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn()
+                    .size(), is(1));
+            assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn()
+                    .get(0).toString(), is("9788764432589"));
 
             assertThat("materialtypes", formatResponse.getPromat().get(0).getElements().getMaterialtypes().getType()
                     .size(), is(1));

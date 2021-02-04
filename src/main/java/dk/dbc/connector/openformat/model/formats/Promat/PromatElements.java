@@ -6,7 +6,11 @@
 package dk.dbc.connector.openformat.model.formats.Promat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import dk.dbc.connector.openformat.model.OpenFormatDeserializer;
 import dk.dbc.connector.openformat.model.OpenFormatValue;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PromatElements {
@@ -14,7 +18,7 @@ public class PromatElements {
     private OpenFormatValue faust;
     private OpenFormatValue creator;
     private OpenFormatValue dk5;
-    private OpenFormatValue isbn;
+    private List<OpenFormatValue> isbn;
     private PromatMaterialTypes materialtypes;
     private OpenFormatValue extent;
     private OpenFormatValue publisher;
@@ -61,15 +65,16 @@ public class PromatElements {
         return this;
     }
 
-    public OpenFormatValue getIsbn() {
+    public List<OpenFormatValue> getIsbn() {
         return isbn;
     }
 
-    public void setIsbn(OpenFormatValue isbn) {
+    @JsonDeserialize(using = OpenFormatDeserializer.class)
+    public void setIsbn(List<OpenFormatValue> isbn) {
         this.isbn = isbn;
     }
 
-    public PromatElements withIsbn(OpenFormatValue isbn) {
+    public PromatElements withIsbn(List<OpenFormatValue> isbn) {
         this.isbn = isbn;
         return this;
     }

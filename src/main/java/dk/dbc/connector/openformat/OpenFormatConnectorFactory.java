@@ -56,7 +56,7 @@ public class OpenFormatConnectorFactory {
     }
 
     @Inject
-    @ConfigProperty(name = "OPENFORMAT_SERVICE_URL")
+    @ConfigProperty(name = "OPENFORMAT_SERVICE_URL", defaultValue = "")
     private String baseUrl;
 
     OpenFormatConnector openformatConnector;
