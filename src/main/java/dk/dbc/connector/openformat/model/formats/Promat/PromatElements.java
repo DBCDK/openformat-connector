@@ -10,21 +10,22 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import dk.dbc.connector.openformat.model.OpenFormatDeserializer;
 import dk.dbc.connector.openformat.model.OpenFormatValue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PromatElements {
 
-    private OpenFormatValue faust;
-    private OpenFormatValue creator;
-    private OpenFormatValue dk5;
-    private List<OpenFormatValue> isbn;
-    private PromatMaterialTypes materialtypes;
-    private OpenFormatValue extent;
-    private OpenFormatValue publisher;
-    private PromatCatalogCodes catalogcodes;
-    private OpenFormatValue title;
-    private OpenFormatValue targetgroup;
+    private OpenFormatValue faust = new OpenFormatValue();
+    private OpenFormatValue creator = new OpenFormatValue();
+    private OpenFormatValue dk5 = new OpenFormatValue();
+    private List<OpenFormatValue> isbn = new ArrayList<>();
+    private PromatMaterialTypes materialtypes = new PromatMaterialTypes();
+    private OpenFormatValue extent = new OpenFormatValue();
+    private OpenFormatValue publisher = new OpenFormatValue();
+    private PromatCatalogCodes catalogcodes = new PromatCatalogCodes();
+    private OpenFormatValue title = new OpenFormatValue();
+    private OpenFormatValue targetgroup = new OpenFormatValue();
 
     public OpenFormatValue getFaust() {
         return faust;
