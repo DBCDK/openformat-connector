@@ -10,12 +10,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import dk.dbc.connector.openformat.model.OpenFormatDeserializer;
 import dk.dbc.connector.openformat.model.OpenFormatValue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PromatMaterialTypes {
 
-    private List<OpenFormatValue> type;
+    private List<OpenFormatValue> type = new ArrayList<>();
 
     public List<OpenFormatValue> getType() {
         return type;

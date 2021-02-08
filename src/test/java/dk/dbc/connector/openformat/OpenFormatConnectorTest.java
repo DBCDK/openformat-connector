@@ -15,6 +15,8 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 
@@ -25,9 +27,11 @@ import java.util.stream.Collectors;
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class OpenFormatConnectorTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenFormatConnectorTest.class);
     private static WireMockServer wireMockServer;
     private static String wireMockHost;
     public static OpenFormatConnector connector;
@@ -110,5 +114,19 @@ public class OpenFormatConnectorTest {
         catch(OpenFormatConnectorException connectorException) {
             throw connectorException;
         }
+    }
+
+    @Test
+    public void testOpenfFormatPromatResponseWithMissingFields() throws OpenFormatConnectorException {
+
+        PromatEntity entity = connector.format("23319322", PromatEntity.class);
+        PromatFormatResponse formatResponse = entity.getFormatResponse();
+        assertThat(formatResponse.getError().size(), is(0));
+        assertThat(formatResponse.getPromat().size(), is(1));
+
+        assertThat("catalogcodes is not null", formatResponse.getPromat().get(0).getElements().getCatalogcodes(), is(notNullValue()));
+        assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(0));
+
+        assertThat("targetGroup is not null", formatResponse.getPromat().get(0).getElements().getTargetgroup().getValue(), is(notNullValue()));
     }
 }
