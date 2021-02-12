@@ -84,12 +84,14 @@ public class OpenFormatConnectorTest {
             assertThat(formatResponse.getError().size(), is(0));
 
             assertThat("faust", formatResponse.getPromat().get(0).getElements().getFaust().toString(), is("24699773"));
-            assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().toString(), is("Kꜳrsbøl, Jette A."));
+            assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().size(), is(1));
+            assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().get(0).toString(), is("Kꜳrsbøl, Jette A."));
             assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5().toString(), is("sk"));
             assertThat("title", formatResponse.getPromat().get(0).getElements().getTitle().toString(), is("Den lukkede bog"));
             assertThat("targetgroup", formatResponse.getPromat().get(0).getElements().getTargetgroup().toString(), is("v"));
             assertThat("extent", formatResponse.getPromat().get(0).getElements().getExtent().toString(), is("21 t., 29 min."));
-            assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().toString(), is("Ballerup, Biblioteksmedier, 2011"));
+            assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(1));
+            assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().get(0).toString(), is("Ballerup, Biblioteksmedier, 2011"));
 
             assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn()
                     .size(), is(1));
@@ -128,5 +130,32 @@ public class OpenFormatConnectorTest {
         assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(0));
 
         assertThat("targetGroup is not null", formatResponse.getPromat().get(0).getElements().getTargetgroup().getValue(), is(notNullValue()));
+    }
+
+    @Test
+    public void testOpenfFormatPromatResponsePublisherIsArray() throws OpenFormatConnectorException {
+
+        PromatEntity entity = connector.format("38600052", PromatEntity.class);
+        PromatFormatResponse formatResponse = entity.getFormatResponse();
+        assertThat(formatResponse.getError().size(), is(0));
+        assertThat(formatResponse.getPromat().size(), is(1));
+
+        assertThat("catalogcodes is not null", formatResponse.getPromat().get(0).getElements().getCatalogcodes(), is(notNullValue()));
+        assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(3));
+        assertThat("targetGroup is not null", formatResponse.getPromat().get(0).getElements().getTargetgroup().getValue(), is(notNullValue()));
+        assertThat("title is not null", formatResponse.getPromat().get(0).getElements().getTitle().getValue(), is(notNullValue()));
+        assertThat("publisher is not null", formatResponse.getPromat().get(0).getElements().getPublisher(), is(notNullValue()));
+        assertThat("publisher has 2 strings", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(2));
+    }
+
+    @Test
+    public void testOpenfFormatPromatResponseMetakompasSubject() throws OpenFormatConnectorException {
+
+        PromatEntity entity = connector.format("38600052", PromatEntity.class);
+        PromatFormatResponse formatResponse = entity.getFormatResponse();
+        assertThat(formatResponse.getError().size(), is(0));
+        assertThat(formatResponse.getPromat().size(), is(1));
+
+        assertThat("metakompassubject", formatResponse.getPromat().get(0).getElements().getMetakompassubject().getValue(), is("true"));
     }
 }
