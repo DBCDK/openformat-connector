@@ -17,12 +17,12 @@ import java.util.List;
 public class PromatElements {
 
     private OpenFormatValue faust = new OpenFormatValue();
-    private OpenFormatValue creator = new OpenFormatValue();
+    private List<OpenFormatValue> creator = new ArrayList<>();
     private OpenFormatValue dk5 = new OpenFormatValue();
     private List<OpenFormatValue> isbn = new ArrayList<>();
     private PromatMaterialTypes materialtypes = new PromatMaterialTypes();
     private OpenFormatValue extent = new OpenFormatValue();
-    private OpenFormatValue publisher = new OpenFormatValue();
+    private List<OpenFormatValue> publisher = new ArrayList<>();
     private PromatCatalogCodes catalogcodes = new PromatCatalogCodes();
     private OpenFormatValue title = new OpenFormatValue();
     private OpenFormatValue targetgroup = new OpenFormatValue();
@@ -40,15 +40,16 @@ public class PromatElements {
         return this;
     }
 
-    public OpenFormatValue getCreator() {
+    public List<OpenFormatValue> getCreator() {
         return creator;
     }
 
-    public void setCreator(OpenFormatValue creator) {
+    @JsonDeserialize(using = OpenFormatDeserializer.class)
+    public void setCreator(List<OpenFormatValue> creator) {
         this.creator = creator;
     }
 
-    public PromatElements withCreator(OpenFormatValue creator) {
+    public PromatElements withCreator(List<OpenFormatValue> creator) {
         this.creator = creator;
         return this;
     }
@@ -106,15 +107,16 @@ public class PromatElements {
         return this;
     }
 
-    public OpenFormatValue getPublisher() {
+    public List<OpenFormatValue> getPublisher() {
         return publisher;
     }
 
-    public void setPublisher(OpenFormatValue publisher) {
+    @JsonDeserialize(using = OpenFormatDeserializer.class)
+    public void setPublisher(List<OpenFormatValue> publisher) {
         this.publisher = publisher;
     }
 
-    public PromatElements withPublisher(OpenFormatValue publisher) {
+    public PromatElements withPublisher(List<OpenFormatValue> publisher) {
         this.publisher = publisher;
         return this;
     }
