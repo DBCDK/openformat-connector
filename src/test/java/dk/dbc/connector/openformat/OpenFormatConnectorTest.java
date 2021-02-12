@@ -147,4 +147,15 @@ public class OpenFormatConnectorTest {
         assertThat("publisher is not null", formatResponse.getPromat().get(0).getElements().getPublisher(), is(notNullValue()));
         assertThat("publisher has 2 strings", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(2));
     }
+
+    @Test
+    public void testOpenfFormatPromatResponseMetakompasSubject() throws OpenFormatConnectorException {
+
+        PromatEntity entity = connector.format("38600052", PromatEntity.class);
+        PromatFormatResponse formatResponse = entity.getFormatResponse();
+        assertThat(formatResponse.getError().size(), is(0));
+        assertThat(formatResponse.getPromat().size(), is(1));
+
+        assertThat("metakompassubject", formatResponse.getPromat().get(0).getElements().getMetakompassubject().getValue(), is("true"));
+    }
 }

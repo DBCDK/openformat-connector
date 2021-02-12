@@ -26,6 +26,7 @@ public class PromatElements {
     private PromatCatalogCodes catalogcodes = new PromatCatalogCodes();
     private OpenFormatValue title = new OpenFormatValue();
     private OpenFormatValue targetgroup = new OpenFormatValue();
+    private OpenFormatValue metakompassubject = new OpenFormatValue();
 
     public OpenFormatValue getFaust() {
         return faust;
@@ -160,6 +161,19 @@ public class PromatElements {
         return this;
     }
 
+    public OpenFormatValue getMetakompassubject() {
+        return metakompassubject;
+    }
+
+    public void setMetakompassubject(OpenFormatValue metakompassubject) {
+        this.metakompassubject = metakompassubject;
+    }
+
+    public PromatElements withMetakompassubject(OpenFormatValue metakompassubject) {
+        this.metakompassubject = metakompassubject;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "PromatElements{" +
@@ -173,6 +187,7 @@ public class PromatElements {
                 ", catalogcodes=" + catalogcodes +
                 ", title=" + title +
                 ", targetgroup=" + targetgroup +
+                ", metakompassubject=" + metakompassubject +
                 '}';
     }
 }
