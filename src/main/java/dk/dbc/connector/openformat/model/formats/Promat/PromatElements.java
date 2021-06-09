@@ -18,7 +18,7 @@ public class PromatElements {
 
     private OpenFormatValue faust = new OpenFormatValue();
     private List<OpenFormatValue> creator = new ArrayList<>();
-    private OpenFormatValue dk5 = new OpenFormatValue();
+    private List<OpenFormatValue> dk5 = new ArrayList<>();
     private List<OpenFormatValue> isbn = new ArrayList<>();
     private PromatMaterialTypes materialtypes = new PromatMaterialTypes();
     private OpenFormatValue extent = new OpenFormatValue();
@@ -55,15 +55,16 @@ public class PromatElements {
         return this;
     }
 
-    public OpenFormatValue getDk5() {
+    public List<OpenFormatValue> getDk5() {
         return dk5;
     }
 
-    public void setDk5(OpenFormatValue dk5) {
+    @JsonDeserialize(using = OpenFormatDeserializer.class)
+    public void setDk5(List<OpenFormatValue> dk5) {
         this.dk5 = dk5;
     }
 
-    public PromatElements withDk5(OpenFormatValue dk5) {
+    public PromatElements withDk5(List<OpenFormatValue> dk5) {
         this.dk5 = dk5;
         return this;
     }
