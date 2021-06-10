@@ -86,7 +86,7 @@ public class OpenFormatConnectorTest {
             assertThat("faust", formatResponse.getPromat().get(0).getElements().getFaust().toString(), is("24699773"));
             assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().size(), is(1));
             assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().get(0).toString(), is("Kꜳrsbøl, Jette A."));
-            assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5().toString(), is("sk"));
+            assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5().get(0).toString(), is("sk"));
             assertThat("title", formatResponse.getPromat().get(0).getElements().getTitle().toString(), is("Den lukkede bog"));
             assertThat("targetgroup", formatResponse.getPromat().get(0).getElements().getTargetgroup().toString(), is("v"));
             assertThat("extent", formatResponse.getPromat().get(0).getElements().getExtent().toString(), is("21 t., 29 min."));
@@ -157,5 +157,19 @@ public class OpenFormatConnectorTest {
         assertThat(formatResponse.getPromat().size(), is(1));
 
         assertThat("metakompassubject", formatResponse.getPromat().get(0).getElements().getMetakompassubject().getValue(), is("true"));
+    }
+
+    @Test
+    public void testOpenfFormatPromatResponseWithDk5IsArray() throws OpenFormatConnectorException {
+
+        PromatEntity entity = connector.format("26485878", PromatEntity.class);
+        PromatFormatResponse formatResponse = entity.getFormatResponse();
+        assertThat(formatResponse.getError().size(), is(0));
+        assertThat(formatResponse.getPromat().size(), is(1));
+
+        assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5(), is(notNullValue()));
+        assertThat("dk5 size", formatResponse.getPromat().get(0).getElements().getDk5().size(), is(2));
+        assertThat("dk5 0", formatResponse.getPromat().get(0).getElements().getDk5().get(0).getValue(), is("79.864"));
+        assertThat("dk5 1", formatResponse.getPromat().get(0).getElements().getDk5().get(1).getValue(), is("Olsen, Ole"));
     }
 }

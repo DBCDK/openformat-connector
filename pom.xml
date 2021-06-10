@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>openformat-connector</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <name>openformat-connector</name>
 
   <properties>
