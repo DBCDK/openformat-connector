@@ -25,7 +25,7 @@ public class PromatElements {
     private List<OpenFormatValue> publisher = new ArrayList<>();
     private PromatCatalogCodes catalogcodes = new PromatCatalogCodes();
     private OpenFormatValue title = new OpenFormatValue();
-    private OpenFormatValue targetgroup = new OpenFormatValue();
+    private List<OpenFormatValue> targetgroup = new ArrayList<>();
     private OpenFormatValue metakompassubject = new OpenFormatValue();
 
     public OpenFormatValue getFaust() {
@@ -149,15 +149,16 @@ public class PromatElements {
         return this;
     }
 
-    public OpenFormatValue getTargetgroup() {
+    public List<OpenFormatValue> getTargetgroup() {
         return targetgroup;
     }
 
-    public void setTargetgroup(OpenFormatValue targetgroup) {
+    @JsonDeserialize(using = OpenFormatDeserializer.class)
+    public void setTargetgroup(List<OpenFormatValue> targetgroup) {
         this.targetgroup = targetgroup;
     }
 
-    public PromatElements withTargetgroup(OpenFormatValue targetgroup) {
+    public PromatElements withTargetgroup(List<OpenFormatValue> targetgroup) {
         this.targetgroup = targetgroup;
         return this;
     }
