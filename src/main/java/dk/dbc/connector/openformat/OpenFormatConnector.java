@@ -1,21 +1,15 @@
-/*
- * Copyright Dansk Bibliotekscenter a/s. Licensed under GPLv3
- * See license text in LICENSE.txt or at https://opensource.dbc.dk/licenses/gpl-3.0/
- */
-
 package dk.dbc.connector.openformat;
 
 import dk.dbc.connector.openformat.model.OpenFormatEntity;
 import dk.dbc.connector.openformat.model.formats.Promat.PromatEntity;
 import dk.dbc.httpclient.FailSafeHttpClient;
 import dk.dbc.httpclient.HttpGet;
-import dk.dbc.invariant.InvariantUtil;
 
 import net.jodah.failsafe.RetryPolicy;
 
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -60,10 +54,12 @@ public class OpenFormatConnector {
      * @param baseUrl            base URL for record service endpoint
      */
     public OpenFormatConnector(FailSafeHttpClient failSafeHttpClient, String baseUrl) {
-        this.failSafeHttpClient = InvariantUtil.checkNotNullOrThrow(
-                failSafeHttpClient, "failSafeHttpClient");
-        this.baseUrl = InvariantUtil.checkNotNullNotEmptyOrThrow(
-                baseUrl, "baseUrl");
+        if (failSafeHttpClient == null || baseUrl == null) {
+            throw new NullPointerException(String.format("Null parameter passed in call to OpenFormatConnector(%s, %s)",
+                    failSafeHttpClient == null ? "null" : failSafeHttpClient.toString(), baseUrl == null ? "null" : baseUrl));
+        }
+        this.failSafeHttpClient = failSafeHttpClient;
+        this.baseUrl = baseUrl;
     }
 
     public <T extends OpenFormatEntity> T format(String faust, Class c) throws OpenFormatConnectorException {
