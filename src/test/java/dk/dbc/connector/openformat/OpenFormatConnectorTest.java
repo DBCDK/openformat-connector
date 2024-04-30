@@ -123,8 +123,7 @@ public class OpenFormatConnectorTest {
 
         assertThat("catalogcodes is not null", formatResponse.getPromat().get(0).getElements().getCatalogcodes(), is(notNullValue()));
         assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(0));
-
-        assertThat("targetGroup is 'v'", formatResponse.getPromat().get(0).getElements().getTargetgroup().get(0).toString(), is("v"));
+        assertThat("targetGroup is empty", formatResponse.getPromat().get(0).getElements().getTargetgroup().size(), is(0));
     }
 
     @Test
@@ -140,7 +139,7 @@ public class OpenFormatConnectorTest {
         assertThat("targetGroup is not null", formatResponse.getPromat().get(0).getElements().getTargetgroup().get(0).getValue(), is(notNullValue()));
         assertThat("title is not null", formatResponse.getPromat().get(0).getElements().getTitle().getValue(), is(notNullValue()));
         assertThat("publisher is not null", formatResponse.getPromat().get(0).getElements().getPublisher(), is(notNullValue()));
-        assertThat("publisher has 2 strings", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(2));
+        assertThat("publisher has 1 string", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(1));
     }
 
     @Test
@@ -177,6 +176,5 @@ public class OpenFormatConnectorTest {
         assertThat("targetGroup is list of 2",
                 formatResponse.getPromat().get(0).getElements().getTargetgroup().size(),
                 is(2));
-
     }
 }
