@@ -22,7 +22,7 @@ public class OpenFormatConnectorTestWireMockRecorder {
     private static void recordGetApplicantRequests(OpenFormatConnectorTest OpenFormatConnectorTest)
             throws OpenFormatConnectorException {
         //OpenFormatConnectorTest.testOpenFormatPromatFormatResponse();
-        OpenFormatConnectorTest.testOpenFormatPromatFormatResponseWithError();
+        //OpenFormatConnectorTest.testOpenFormatPromatFormatResponseWithError();
     }
 
 }

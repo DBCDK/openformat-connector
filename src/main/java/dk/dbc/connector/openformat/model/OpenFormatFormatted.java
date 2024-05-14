@@ -1,11 +1,11 @@
-package dk.dbc.connector.openformat.model.formats.Promat;
+package dk.dbc.connector.openformat.model;
 
 import java.util.List;
 
-public class PromatFormatted {
+public class OpenFormatFormatted {
     private String format;
 
-    private List<PromatRecord> records;
+    private List<OpenFormatRecord> records;
 
     public String getFormat() {
         return format;
@@ -15,20 +15,20 @@ public class PromatFormatted {
         this.format = format;
     }
 
-    public PromatFormatted withFormat(String format) {
+    public OpenFormatFormatted withFormat(String format) {
         this.format = format;
         return this;
     }
 
-    public List<PromatRecord> getRecords() {
+    public List<OpenFormatRecord> getRecords() {
         return records;
     }
 
-    public void setRecords(List<PromatRecord> records) {
+    public void setRecords(List<OpenFormatRecord> records) {
         this.records = records;
     }
 
-    public PromatFormatted withRecords(List<PromatRecord> records) {
+    public OpenFormatFormatted withRecords(List<OpenFormatRecord> records) {
         this.records = records;
         return this;
     }

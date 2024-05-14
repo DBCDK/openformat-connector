@@ -1,6 +1,8 @@
-package dk.dbc.connector.openformat.model.formats.Promat;
+package dk.dbc.connector.openformat.model;
 
-public class PromatRecord {
+import dk.dbc.connector.openformat.model.formats.Promat.PromatElements;
+
+public class OpenFormatRecord {
     private PromatElements elements;
 
     public PromatElements getElements() {
@@ -11,7 +13,7 @@ public class PromatRecord {
         this.elements = elements;
     }
 
-    public PromatRecord withElements(PromatElements elements) {
+    public OpenFormatRecord withElements(PromatElements elements) {
         this.elements = elements;
         return this;
     }

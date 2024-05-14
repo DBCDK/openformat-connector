@@ -1,13 +1,15 @@
 package dk.dbc.connector.openformat.model.formats.Promat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import dk.dbc.connector.openformat.model.OpenFormatElements;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PromatElements {
+public class PromatElements implements OpenFormatElements {
     private List<String> faust;
     private List<String> isbn;
+
 
     /*
       Todo: Add elements...
@@ -54,5 +56,10 @@ public class PromatElements {
                 "faust=" + faust +
                 ", isbn=" + isbn +
                 '}';
+    }
+
+    @Override
+    public String getName() {
+        return "promat";
     }
 }

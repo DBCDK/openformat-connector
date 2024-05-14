@@ -1,11 +1,11 @@
-package dk.dbc.connector.openformat.model.formats.Promat;
+package dk.dbc.connector.openformat.model;
 
-public class PromatDisplay {
+public class OpenFormatDisplay {
     private String mediaType;
 
     private String error;
 
-    private PromatFormatted formatted;
+    private OpenFormatFormatted formatted;
 
     public String getMediaType() {
         return mediaType;
@@ -15,7 +15,7 @@ public class PromatDisplay {
         this.mediaType = mediaType;
     }
 
-    public PromatDisplay withMediaType(String mediaType) {
+    public OpenFormatDisplay withMediaType(String mediaType) {
         this.mediaType = mediaType;
         return this;
     }
@@ -28,20 +28,20 @@ public class PromatDisplay {
         this.error = error;
     }
 
-    public PromatDisplay withError(String error) {
+    public OpenFormatDisplay withError(String error) {
         this.error = error;
         return this;
     }
 
-    public PromatFormatted getFormatted() {
+    public OpenFormatFormatted getFormatted() {
         return formatted;
     }
 
-    public void setFormatted(PromatFormatted formatted) {
+    public void setFormatted(OpenFormatFormatted formatted) {
         this.formatted = formatted;
     }
 
-    public PromatDisplay withFormatted(PromatFormatted formatted) {
+    public OpenFormatDisplay withFormatted(OpenFormatFormatted formatted) {
         this.formatted = formatted;
         return this;
     }

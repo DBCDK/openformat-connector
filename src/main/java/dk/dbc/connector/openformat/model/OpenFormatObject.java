@@ -1,22 +1,19 @@
-package dk.dbc.connector.openformat.model.formats.Promat;
+package dk.dbc.connector.openformat.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dk.dbc.connector.openformat.model.OpenFormatResponseObject;
 
 import java.util.List;
 
-public class PromatObject implements OpenFormatResponseObject {
-
+public class OpenFormatObject implements OpenFormatResponseObject {
 
     @JsonProperty("promat")
-    private List<PromatDisplay> display;
+    private List<OpenFormatDisplay> display;
 
-
-    public List<PromatDisplay> getDisplay() {
+    public List<OpenFormatDisplay> getDisplay() {
         return display;
     }
 
-    public PromatObject setDisplay(List<PromatDisplay> display) {
+    public OpenFormatObject setDisplay(List<OpenFormatDisplay> display) {
         this.display = display;
         return this;
     }
