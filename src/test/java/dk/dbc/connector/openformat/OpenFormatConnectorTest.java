@@ -20,6 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -37,14 +39,11 @@ public class OpenFormatConnectorTest {
 
     @BeforeAll
     static void startWireMockServer() {
-//        wireMockServer = new WireMockServer(options().dynamicPort()
-//                .dynamicHttpsPort());
-//        wireMockServer.start();
-//        wireMockHost = "http://localhost:" + wireMockServer.port() + "/server.php";
-//        configureFor("localhost", wireMockServer.port());
-        //wireMockHost = "http://172.17.33.64:8080";
-        //wireMockHost = "http://openformat-php-master.frontend-prod.svc.cloud.dbc.dk/server.php";
-        wireMockHost = "http://open-format-broker.cisterne.svc.cloud.dbc.dk/api/v2";
+        wireMockServer = new WireMockServer(options().dynamicPort()
+                .dynamicHttpsPort());
+        wireMockServer.start();
+        wireMockHost = "http://localhost:" + wireMockServer.port();
+        configureFor("localhost", wireMockServer.port());
     }
 
     @BeforeAll
@@ -54,7 +53,7 @@ public class OpenFormatConnectorTest {
 
     @AfterAll
     static void stopWireMockServer() {
-        //wireMockServer.stop();
+        wireMockServer.stop();
     }
 
     @Test
