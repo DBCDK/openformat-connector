@@ -1,13 +1,13 @@
 package dk.dbc.connector.openformat;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.dbc.connector.openformat.model.OpenFormatElements;
-import dk.dbc.connector.openformat.model.OpenFormatFormatted;
 import dk.dbc.connector.openformat.model.OpenFormatRequest;
 import dk.dbc.connector.openformat.model.OpenFormatResponse;
 import dk.dbc.httpclient.FailSafeHttpClient;
 
 import dk.dbc.httpclient.HttpPost;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import net.jodah.failsafe.RetryPolicy;
 
@@ -16,10 +16,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import dk.dbc.util.Stopwatch;
@@ -82,14 +79,14 @@ public class OpenFormatConnector {
             final Stopwatch stopwatch = new Stopwatch();
             LOGGER.info("OpenFormat request with faust {} and agency {}", faust, agency);
 
-            String format = c.getDeclaredConstructor().newInstance().getName();
+            String format = getFormatName(c);
 
             final HttpPost httpPost = new HttpPost(failSafeHttpClient)
                     .withBaseUrl(baseUrl)
                     .withPathElements(FORMAT_REQUEST)
                     .withData(new OpenFormatRequest(format, agency, faust), MediaType.APPLICATION_JSON);
 
-            OpenFormatResponse<T> entity = sendPostRequest(httpPost);
+            OpenFormatResponse<T> entity = sendPostRequest(httpPost, c);
             LOGGER.info("Request took {} ms", stopwatch.getElapsedTime(TimeUnit.MILLISECONDS));
             LOGGER.info("Response: {}", entity);
             return entity;
@@ -102,7 +99,7 @@ public class OpenFormatConnector {
         failSafeHttpClient.getClient().close();
     }
 
-    private <T extends OpenFormatElements> OpenFormatResponse<T> sendPostRequest(HttpPost httpPost) throws OpenFormatConnectorException {
+    private <T extends OpenFormatElements> OpenFormatResponse<T> sendPostRequest(HttpPost httpPost, Class<T> c) throws OpenFormatConnectorException, JsonProcessingException {
         LOGGER.info("OpenFormat request: {}", httpPost.toString());
         LOGGER.info("With data: {}", httpPost.getEntity().toString());
 
@@ -112,16 +109,17 @@ public class OpenFormatConnector {
                     response.getStatus()));
         }
 
-        return readResponseEntity(response);
+        return readResponseEntity(response, c);
     }
 
-    private <T extends OpenFormatElements> OpenFormatResponse<T> readResponseEntity(Response response) throws OpenFormatConnectorException {
-        //String x = response.readEntity(String.class);
-        //LOGGER.info("{}", x);
-        final OpenFormatResponse<T> entity = response.readEntity(OpenFormatResponse.class);
-        if (entity == null) {
-            throw new OpenFormatConnectorException("OpenFormat returned with null-valued %s entity");
-        }
+    private <T extends OpenFormatElements> OpenFormatResponse<T> readResponseEntity(Response response, Class<T> c) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        OpenFormatResponse<T> entity = mapper.readValue(response.readEntity(String.class), mapper.getTypeFactory().constructParametricType(OpenFormatResponse.class, c));
+        LOGGER.info("With Result: {}", entity);
         return entity;
+    }
+
+    static <T extends OpenFormatElements> String getFormatName(Class<T> c) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return c.getDeclaredConstructor().newInstance().getName();
     }
 }

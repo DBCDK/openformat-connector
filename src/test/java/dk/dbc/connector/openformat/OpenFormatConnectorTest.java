@@ -16,6 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.ws.rs.client.Client;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -53,53 +57,104 @@ public class OpenFormatConnectorTest {
         //wireMockServer.stop();
     }
 
-    /*@Test
+    @Test
     public void testOpenFormatPromatFormatResponseWithError() throws OpenFormatConnectorException {
 
-        OpenFormatResponse response = connector.format("B117", OpenFormatResponse.class);
+        OpenFormatResponse<PromatElements> response = connector.format("B117", PromatElements.class);
         assertThat("Has 1 object", response.getObjects().size(), is(1));
-        assertThat("Has 1 display", response.getObjects().get(0).getDisplay().size(), is(1));
-        assertThat("Has an error", response.getObjects().get(0).getDisplay().get(0).getError(), is(notNullValue()));
-        assertThat("Has no formatted", response.getObjects().get(0).getDisplay().get(0).getFormatted(), is(nullValue()));
-        assertThat("Has expected message", response.getObjects().get(0).getDisplay().get(0).getError(), containsString("Cannot find object: 870970-basis:B117"));
-    }*/
+        assertThat("Has 1 display", response.getObjects().get(0).getDisplays().size(), is(1));
+        assertThat("Has 1 elements object", response.getObjects().get(0).getDisplays().get((new PromatElements() {}).getName()).size(), is(1));
+        assertThat("Has an error", response.getObjects().get(0).getDisplays().get((new PromatElements() {}).getName()).get(0).getError(), is(notNullValue()));
+        assertThat("Has no formatted", response.getObjects().get(0).getDisplays().get((new PromatElements() {}).getName()).get(0).getFormatted(), is(nullValue()));
+        assertThat("Has expected message", response.getObjects().get(0).getDisplays().get((new PromatElements() {}).getName()).get(0).getError(), containsString("Cannot find object: 870970-basis:B117"));
+    }
 
-    private <T extends OpenFormatElements> void assertResponse(OpenFormatResponse<T> response) {
+    @Test
+    public void testOpenFormatPromatFormatResponseErrorHelper() throws OpenFormatConnectorException {
+        OpenFormatResponse<PromatElements> response = connector.format("B117", PromatElements.class);
+        assertThat("has 1 error", response.getErrors().size(), is(1));
+        assertThat("has errors", response.hasError(), is(true));
+        assertThat("has error", response.getError(), is(notNullValue()));
+        assertThat("has expected error", response.getError(), is("Cannot find object: 870970-basis:B117"));
+    }
+
+    @Test
+    public void testOpenFormatPromatFormatResponseElementsHelper() throws OpenFormatConnectorException {
+        OpenFormatResponse<PromatElements> response = connector.format("24699773", PromatElements.class);
+
+        PromatElements elements = response.getElements();
+        assertThat("getElements returns correct element", elements.getFaust().contains("24699773"), is(true));
+    }
+
+    @Test
+    public void testOpenFormatPromatFormatResponseElementsHelperOnError() throws OpenFormatConnectorException {
+        OpenFormatResponse<PromatElements> response = connector.format("B117", PromatElements.class);
+
+        PromatElements elements = response.getElements();
+        assertThat("getElements is null", elements, is(nullValue()));
+    }
+
+    private <T extends OpenFormatElements> T fetchAndAssertResponse(String faust, Class<T> c) throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        String formatName = OpenFormatConnector.getFormatName(c);
+        OpenFormatResponse<T> response = connector.format(faust, c);
+
+        // Verify that we got a good response
+        assertThat(response.hasError(), is(false));
+
         assertThat("Has object", response.getObjects(), is(notNullValue()));
         assertThat("Has 1 object", response.getObjects().size(), is(1));
 
-        assertThat("Has display in object", response.getObjects().get(0).getDisplay(), is(notNullValue()));
-        assertThat("Has 1 display in object", response.getObjects().get(0).getDisplay().size(), is(1));
+        assertThat("Has display in object", response.getObjects().get(0).getDisplays(), is(notNullValue()));
+        assertThat("Has 1 display in object", response.getObjects().get(0).getDisplays().size(), is(1));
+        assertThat("Has 1 display for format", response.getObjects().get(0).getDisplay(formatName).size(), is(1));
 
-        assertThat("Has no error in display", response.getObjects().get(0).getDisplay().get(0).getError(), is(nullValue()));
+        assertThat("Has no error in display", response.getObjects().get(0).getDisplay(formatName).get(0).getError(), is(nullValue()));
+        assertThat("Has no error in display", response.getObjects().get(0).getDisplay(formatName).get(0).getError(), is(nullValue()));
 
-        assertThat("Has formatted data in display", response.getObjects().get(0).getDisplay().get(0).getFormatted(), is(notNullValue()));
+        assertThat("Has formatted data in display", response.getObjects().get(0).getDisplay(formatName).get(0).getFormatted(), is(notNullValue()));
 
-        assertThat("Has record in formatted data", response.getObjects().get(0).getDisplay().get(0).getFormatted().getRecords(), is(notNullValue()));
-        assertThat("Has 1 record in formatted data", response.getObjects().get(0).getDisplay().get(0).getFormatted().getRecords().size(), is(1));
+        assertThat("Has record in formatted data", response.getObjects().get(0).getDisplay(formatName).get(0).getFormatted().getRecords(), is(notNullValue()));
+        assertThat("Has 1 record in formatted data", response.getObjects().get(0).getDisplay(formatName).get(0).getFormatted().getRecords().size(), is(1));
 
-        assertThat("Has elements in record", response.getObjects().get(0).getDisplay().get(0).getFormatted().getRecords().get(0).getElements(), is(notNullValue()));
+        assertThat("Has elements in record", response.getObjects().get(0).getDisplay(formatName).get(0).getFormatted().getRecords().get(0).getElements(), is(notNullValue()));
+
+        // Fetch and return the elements object
+        T elements = response.getElements();
+        assertThat("has element", elements, is(notNullValue()));
+        return elements;
     }
 
-    /*@Test
-    public void testOpenFormatPromatFormatResponseHelpers() throws OpenFormatConnectorException {
-        OpenFormatResponse response = connector.format("24699773", OpenFormatResponse.class);
+    @Test
+    public void testOpenFormatPromatFormatResponseFaustHelpers() throws OpenFormatConnectorException {
+        OpenFormatResponse<PromatElements> response = connector.format("24699773", PromatElements.class);
 
-        assertThat("getElementsWithFaust", response.getElementsWithFaust("24699773"), is(notNullValue()));
-        assertThat("getElementsWithFaust returns correct element", response.getElementsWithFaust("24699773")
-                .getFaust().contains("24699773"), is(true));
+        List<PromatElements> elementsList = response.getElementsWithFaust("24699773");
+        assertThat("getElementsWithFaust", elementsList, is(notNullValue()));
+        assertThat("has 1 element", elementsList.size(), is(1));
+        assertThat("getElementsWithFaust returns correct element", elementsList.get(0).getFaust().contains("24699773"), is(true));
 
-        assertThat("getElementsWithIsbn", response.getElementsWithIsbn("9788764432589"), is(notNullValue()));
-        assertThat("getElementsWithIsbn returns correct element", response.getElementsWithIsbn("9788764432589")
-                .getIsbn().contains("9788764432589"), is(true));
-    }*/
+        PromatElements elements = response.getElementWithFaust("24699773");
+        assertThat("getElementWithFaust", elements, is(notNullValue()));
+        assertThat("getElementWithFaust returns correct element", elements.getFaust().contains("24699773"), is(true));
+    }
 
     @Test
-    public void testOpenFormatPromatFormatResponse() throws OpenFormatConnectorException {
-
+    public void testOpenFormatPromatFormatResponseIsbnHelpers() throws OpenFormatConnectorException {
         OpenFormatResponse<PromatElements> response = connector.format("24699773", PromatElements.class);
-        assertResponse(response);
-        PromatElements elements = response.getElementsWithFaust("24699773");
+
+        List<PromatElements> elementsList = response.getElementsWithIsbn("9788764432589");
+        assertThat("getElementsWithIsbn", elementsList, is(notNullValue()));
+        assertThat("has 1 element", elementsList.size(), is(1));
+        assertThat("getElementsWithIsbn returns correct element", elementsList.get(0).getIsbn().contains("9788764432589"), is(true));
+
+        PromatElements elements = response.getElementWithIsbn("9788764432589");
+        assertThat("getElementWithIsbn", elements, is(notNullValue()));
+        assertThat("getElementWithIsbn returns correct element", elements.getIsbn().contains("9788764432589"), is(true));
+    }
+
+    @Test
+    public void testOpenFormatPromatFormatResponse() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("24699773", PromatElements.class);
 
         assertThat("has faust", elements.getFaust(), is(notNullValue()));
         assertThat("has 1 faust", elements.getFaust().size(), is(1));
@@ -109,98 +164,74 @@ public class OpenFormatConnectorTest {
         assertThat("has 1 isbn", elements.getIsbn().size(), is(1));
         assertThat("isbn", elements.getIsbn().get(0), is("9788764432589"));
 
-        /*assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().size(), is(1));
-        assertThat("creator", formatResponse.getPromat().get(0).getElements().getCreator().get(0).toString(), is("Kꜳrsbøl, Jette A."));
-        assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5().get(0).toString(), is("sk"));
-        assertThat("title", formatResponse.getPromat().get(0).getElements().getTitle().toString(), is("Den lukkede bog"));
-        assertThat("targetgroup", formatResponse.getPromat().get(0).getElements().getTargetgroup().toString(), is("[v]"));
-        assertThat("extent", formatResponse.getPromat().get(0).getElements().getExtent().toString(), is("21 t., 29 min."));
-        assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(1));
-        assertThat("publisher", formatResponse.getPromat().get(0).getElements().getPublisher().get(0).toString(), is("Ballerup, Biblioteksmedier, 2011"));
+        assertThat("creator", elements.getCreator().size(), is(1));
+        assertThat("creator", elements.getCreator().get(0), is("Kꜳrsbøl, Jette A."));
+        assertThat("dk5", elements.getDk5().size(), is(1));
+        assertThat("dk5", elements.getDk5().get(0), is("sk"));
+        assertThat("title", elements.getTitle().size(), is(1));
+        assertThat("title", elements.getTitle().get(0), is("Den lukkede bog"));
+        assertThat("targetGroup", elements.getTargetGroup().size(), is(1));
+        assertThat("targetGroup", elements.getTargetGroup().get(0), is("v"));
+        assertThat("extent", elements.getExtent().size(), is(1));
+        assertThat("extent", elements.getExtent().get(0), is("21 t., 29 min."));
+        assertThat("publisher", elements.getPublisher().size(), is(1));
+        assertThat("publisher", elements.getPublisher().get(0), is("Ballerup, Biblioteksmedier, 2011"));
 
-        assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn()
-                .size(), is(1));
-        assertThat("isbn", formatResponse.getPromat().get(0).getElements().getIsbn()
-                .get(0).toString(), is("9788764432589"));
+        assertThat("materialtypes", elements.getMaterialTypes(), is(notNullValue()));
+        assertThat("materialtypes", elements.getMaterialTypes().getType(), is(notNullValue()));
+        assertThat("materialtypes", elements.getMaterialTypes().getType().size(), is(1));
+        assertThat("materialtypes", elements.getMaterialTypes().getType().get(0), is("Lydbog (cd)"));
 
-        assertThat("materialtypes", formatResponse.getPromat().get(0).getElements().getMaterialtypes().getType()
-                .size(), is(1));
-        assertThat("materialtypes", formatResponse.getPromat().get(0).getElements().getMaterialtypes().getType()
-                .get(0).toString(), is("Lydbog (cd)"));
-
-        assertThat("catalogcodes", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode()
-                .size(), is(3));
-        List<String> expectedCodes = Arrays.asList("BKM201105", "DAT201827", "DLF201105");
-        assertThat("catalogcodes", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode()
+        assertThat("catalogcodes", elements.getCatalogCodes(), is(notNullValue()));
+        assertThat("catalogcodes", elements.getCatalogCodes().getCode(), is(notNullValue()));
+        assertThat("catalogcodes", elements.getCatalogCodes().getCode().size(), is(3));
+        List<String> expectedCodes = List.of("BKM201105", "DAT201827", "DLF201105");
+        assertThat("catalogcodes", elements.getCatalogCodes().getCode()
                 .stream()
-                .map(OpenFormatValue::getValue)
                 .sorted()
                 .collect(Collectors.toList())
-                .equals(expectedCodes));*/
-    }
-
-    /*@Test
-    public void testOpenfFormatPromatResponseWithMissingFields() throws OpenFormatConnectorException {
-
-        PromatEntity entity = connector.format("23319322", PromatEntity.class);
-        PromatFormatResponse formatResponse = entity.getFormatResponse();
-        assertThat(formatResponse.getError().size(), is(0));
-        assertThat(formatResponse.getPromat().size(), is(1));
-
-        assertThat("catalogcodes is not null", formatResponse.getPromat().get(0).getElements().getCatalogcodes(), is(notNullValue()));
-        assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(0));
-        assertThat("targetGroup is empty", formatResponse.getPromat().get(0).getElements().getTargetgroup().size(), is(0));
+                .equals(expectedCodes));
     }
 
     @Test
-    public void testOpenfFormatPromatResponsePublisherIsArray() throws OpenFormatConnectorException {
+    public void testOpenFormatPromatResponseWithMissingFields() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("23319322", PromatElements.class);
 
-        PromatEntity entity = connector.format("38600052", PromatEntity.class);
-        PromatFormatResponse formatResponse = entity.getFormatResponse();
-        assertThat(formatResponse.getError().size(), is(0));
-        assertThat(formatResponse.getPromat().size(), is(1));
-
-        assertThat("catalogcodes is not null", formatResponse.getPromat().get(0).getElements().getCatalogcodes(), is(notNullValue()));
-        assertThat("catalogcodes is empty", formatResponse.getPromat().get(0).getElements().getCatalogcodes().getCode().size(), is(3));
-        assertThat("targetGroup is not null", formatResponse.getPromat().get(0).getElements().getTargetgroup().get(0).getValue(), is(notNullValue()));
-        assertThat("title is not null", formatResponse.getPromat().get(0).getElements().getTitle().getValue(), is(notNullValue()));
-        assertThat("publisher is not null", formatResponse.getPromat().get(0).getElements().getPublisher(), is(notNullValue()));
-        assertThat("publisher has 1 string", formatResponse.getPromat().get(0).getElements().getPublisher().size(), is(1));
+        assertThat("catalogcodes is null", elements.getCatalogCodes(), is(nullValue()));
+        assertThat("targetGroup is empty", elements.getTargetGroup().size(), is(0));
     }
 
     @Test
-    public void testOpenfFormatPromatResponseMetakompasSubject() throws OpenFormatConnectorException {
+    public void testOpenfFormatPromatResponseWithPublisher() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("38600052", PromatElements.class);
 
-        PromatEntity entity = connector.format("38600052", PromatEntity.class);
-        PromatFormatResponse formatResponse = entity.getFormatResponse();
-        assertThat(formatResponse.getError().size(), is(0));
-        assertThat(formatResponse.getPromat().size(), is(1));
-
-        assertThat("metakompassubject", formatResponse.getPromat().get(0).getElements().getMetakompassubject().getValue(), is("true"));
+        assertThat("publisher is not null", elements.getPublisher(), is(notNullValue()));
+        assertThat("publisher has 1 string", elements.getPublisher().size(), is(1));
+        assertThat("publisher has expected value", elements.getPublisher().get(0), is("Kbh., Faraos Cigarer, Fahrenheit, 2020 i.e. 2021"));
     }
 
     @Test
-    public void testOpenfFormatPromatResponseWithDk5IsArray() throws OpenFormatConnectorException {
+    public void testOpenfFormatPromatResponseWithMetakompasSubject() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("38600052", PromatElements.class);
 
-        PromatEntity entity = connector.format("26485878", PromatEntity.class);
-        PromatFormatResponse formatResponse = entity.getFormatResponse();
-        assertThat(formatResponse.getError().size(), is(0));
-        assertThat(formatResponse.getPromat().size(), is(1));
-
-        assertThat("dk5", formatResponse.getPromat().get(0).getElements().getDk5(), is(notNullValue()));
-        assertThat("dk5 size", formatResponse.getPromat().get(0).getElements().getDk5().size(), is(2));
-        assertThat("dk5 0", formatResponse.getPromat().get(0).getElements().getDk5().get(0).getValue(), is("79.864"));
-        assertThat("dk5 1", formatResponse.getPromat().get(0).getElements().getDk5().get(1).getValue(), is("Olsen, Ole"));
+        assertThat("metakompassubject", elements.getMetakompasSubject(), is(notNullValue()));
+        assertThat("metakompassubject", elements.getMetakompasSubject().get(0), is("true"));
     }
 
     @Test
-    public void testOpenFormatPromatResponseWithTargetGroupAsArray() throws OpenFormatConnectorException {
-        PromatEntity entity = connector.format("38743929", PromatEntity.class);
-        PromatFormatResponse formatResponse = entity.getFormatResponse();
-        assertThat(formatResponse.getError().size(), is(0));
-        assertThat(formatResponse.getPromat().size(), is(1));
-        assertThat("targetGroup is list of 2",
-                formatResponse.getPromat().get(0).getElements().getTargetgroup().size(),
-                is(2));
-    }*/
+    public void testOpenfFormatPromatResponseWithDk5IsArray() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("26485878", PromatElements.class);
+
+        assertThat("dk5", elements.getDk5(), is(notNullValue()));
+        assertThat("dk5 size", elements.getDk5().size(), is(2));
+        assertThat("dk5 0", elements.getDk5().get(0), is("79.864"));
+        assertThat("dk5 1", elements.getDk5().get(1).trim(), is("Olsen, Ole")); // Todo: There is currently an error in OpenFormat that puts a leading blank in front of " Olsen". When that is fixed, we can remove the 'trim()'
+    }
+
+    @Test
+    public void testOpenFormatPromatResponseWithTargetGroupAsArray() throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        PromatElements elements = fetchAndAssertResponse("38743929", PromatElements.class);
+
+        assertThat("targetGroup is list of 2", elements.getTargetGroup().size(), is(2));
+    }
 }

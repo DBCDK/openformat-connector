@@ -1,27 +1,41 @@
 package dk.dbc.connector.openformat.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class OpenFormatObject implements OpenFormatResponseObject {
+public class OpenFormatObject<T extends OpenFormatElements> {
 
-    @JsonProperty("promat")
-    private List<OpenFormatDisplay> display;
+    private Map<String, List<OpenFormatDisplay<T>>> displays = new HashMap<>();
 
-    public List<OpenFormatDisplay> getDisplay() {
-        return display;
+    @JsonAnySetter
+    public void addDisplay(String name, List<OpenFormatDisplay<T>> display) {
+        displays.put(name, display);
     }
 
-    public OpenFormatObject setDisplay(List<OpenFormatDisplay> display) {
-        this.display = display;
+    public Map<String, List<OpenFormatDisplay<T>>> getDisplays() {
+        return this.displays;
+    }
+
+    public void setDisplays(Map<String, List<OpenFormatDisplay<T>>> displays) {
+        this.displays = displays;
+    }
+
+    public OpenFormatObject<T> withDisplays(Map<String, List<OpenFormatDisplay<T>>> displays) {
+        this.displays = displays;
         return this;
+    }
+
+    public List<OpenFormatDisplay<T>> getDisplay(String name) {
+        return displays.containsKey(name) ? displays.get(name) : List.of();
     }
 
     @Override
     public String toString() {
-        return "PromatObject{" +
-                "display=" + display +
+        return "OpenFormatObject{" +
+                "displays=" + displays +
                 '}';
     }
 }

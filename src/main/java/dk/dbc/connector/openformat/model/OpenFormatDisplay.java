@@ -1,11 +1,11 @@
 package dk.dbc.connector.openformat.model;
 
-public class OpenFormatDisplay {
+public class OpenFormatDisplay<T extends OpenFormatElements> {
     private String mediaType;
 
     private String error;
 
-    private OpenFormatFormatted formatted;
+    private OpenFormatFormatted<T> formatted;
 
     public String getMediaType() {
         return mediaType;
@@ -15,7 +15,7 @@ public class OpenFormatDisplay {
         this.mediaType = mediaType;
     }
 
-    public OpenFormatDisplay withMediaType(String mediaType) {
+    public OpenFormatDisplay<T> withMediaType(String mediaType) {
         this.mediaType = mediaType;
         return this;
     }
@@ -28,27 +28,27 @@ public class OpenFormatDisplay {
         this.error = error;
     }
 
-    public OpenFormatDisplay withError(String error) {
+    public OpenFormatDisplay<T> withError(String error) {
         this.error = error;
         return this;
     }
 
-    public OpenFormatFormatted getFormatted() {
+    public OpenFormatFormatted<T> getFormatted() {
         return formatted;
     }
 
-    public void setFormatted(OpenFormatFormatted formatted) {
+    public void setFormatted(OpenFormatFormatted<T> formatted) {
         this.formatted = formatted;
     }
 
-    public OpenFormatDisplay withFormatted(OpenFormatFormatted formatted) {
+    public OpenFormatDisplay<T> withFormatted(OpenFormatFormatted<T> formatted) {
         this.formatted = formatted;
         return this;
     }
 
     @Override
     public String toString() {
-        return "PromatDisplay{" +
+        return "OpenFormatDisplay{" +
                 "mediaType='" + mediaType + '\'' +
                 ", error='" + error + '\'' +
                 ", formatted=" + formatted +

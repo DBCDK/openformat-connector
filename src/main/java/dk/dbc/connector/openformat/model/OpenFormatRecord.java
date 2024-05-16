@@ -1,26 +1,24 @@
 package dk.dbc.connector.openformat.model;
 
-import dk.dbc.connector.openformat.model.formats.Promat.PromatElements;
+public class OpenFormatRecord<T extends OpenFormatElements> {
+    private T elements;
 
-public class OpenFormatRecord {
-    private PromatElements elements;
-
-    public PromatElements getElements() {
+    public T getElements() {
         return elements;
     }
 
-    public void setElements(PromatElements elements) {
+    public void setElements(T elements) {
         this.elements = elements;
     }
 
-    public OpenFormatRecord withElements(PromatElements elements) {
+    public OpenFormatRecord<T> withElements(T elements) {
         this.elements = elements;
         return this;
     }
 
     @Override
     public String toString() {
-        return "PromatRecord{" +
+        return "OpenFormatRecord{" +
                 "elements=" + elements +
                 '}';
     }

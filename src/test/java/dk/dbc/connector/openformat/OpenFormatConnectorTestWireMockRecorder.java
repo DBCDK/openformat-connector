@@ -1,5 +1,7 @@
 package dk.dbc.connector.openformat;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class OpenFormatConnectorTestWireMockRecorder {
         /*
         Steps to reproduce wiremock recording:
@@ -20,9 +22,9 @@ public class OpenFormatConnectorTestWireMockRecorder {
     }
 
     private static void recordGetApplicantRequests(OpenFormatConnectorTest OpenFormatConnectorTest)
-            throws OpenFormatConnectorException {
-        //OpenFormatConnectorTest.testOpenFormatPromatFormatResponse();
-        //OpenFormatConnectorTest.testOpenFormatPromatFormatResponseWithError();
+            throws OpenFormatConnectorException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        OpenFormatConnectorTest.testOpenFormatPromatFormatResponse();
+        OpenFormatConnectorTest.testOpenFormatPromatFormatResponseWithError();
     }
 
 }
