@@ -66,7 +66,8 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get elements that contains a given faust number.
-     * All formats must have a faust number represented in the elements object.
+     * All formats must have a faust number represented in the elements object as
+     * specified by interface OpenFormatElements.
      * @param faust faust
      * @return list of elements if found, empty list otherwise
      */
@@ -79,7 +80,8 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get the first element that contains a given faust number.
-     * All formats must have a faust number represented in the elements object.
+     * All formats must have a faust number represented in the elements object as specified by
+     * interface OpenFormatElements.
      * @param faust faust
      * @return element if found, null otherwise
      */
@@ -90,7 +92,8 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get elements that contains a given isbn number
-     * All formats must have an isbn number represented in the elements object.
+     * All formats must have an isbn number represented in the elements object as
+     * specified by interface OpenFormatElements.
      * @param isbn isbn
      * @return list of elements if found, empty list otherwise
      */
@@ -103,7 +106,8 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get the first element that contains a given isbn number
-     * All formats must have an isbn number represented in the elements object.
+     * All formats must have an isbn number represented in the elements object as specified
+     * by interface OpenFormatElements.
      * @param isbn isbn
      * @return element if found, null otherwise
      */
@@ -157,7 +161,7 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get the first element in the response.
-     * This is usefull if you query for 1 faust and 1 format only, then
+     * This is useful if you query for 1 faust and 1 format only, then
      * there is no need to go fishing for a specific faust- og isbnnumber to get
      * the element.
      * @return element if any was found, null otherwise
