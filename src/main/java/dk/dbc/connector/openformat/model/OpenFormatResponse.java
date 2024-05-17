@@ -143,7 +143,7 @@ public class OpenFormatResponse<T extends OpenFormatElements> {
 
     /**
      * Helper method to dig down and get the first error
-     * @return error if found, empty list otherwise
+     * @return error if found, null otherwise
      */
     public String getError() {
         List<String> errors = getErrors();
