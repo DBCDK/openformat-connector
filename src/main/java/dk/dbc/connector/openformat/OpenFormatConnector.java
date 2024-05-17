@@ -1,15 +1,21 @@
 package dk.dbc.connector.openformat;
 
-import dk.dbc.connector.openformat.model.OpenFormatEntity;
-import dk.dbc.connector.openformat.model.formats.Promat.PromatEntity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dbc.connector.openformat.model.OpenFormatElements;
+import dk.dbc.connector.openformat.model.OpenFormatRequest;
+import dk.dbc.connector.openformat.model.OpenFormatResponse;
 import dk.dbc.httpclient.FailSafeHttpClient;
-import dk.dbc.httpclient.HttpGet;
 
+import dk.dbc.httpclient.HttpPost;
+import jakarta.ws.rs.core.MediaType;
 import net.jodah.failsafe.RetryPolicy;
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
+
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +37,8 @@ public class OpenFormatConnector {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenFormatConnector.class);
 
     private static final String DEFAULT_AGENCY = "870970";
+
+    private static final String FORMAT_REQUEST = "format";
 
     private static final RetryPolicy<Response> RETRY_POLICY = new RetryPolicy<Response>()
             .handle(ProcessingException.class)
@@ -62,35 +70,40 @@ public class OpenFormatConnector {
         this.baseUrl = baseUrl;
     }
 
-    public <T extends OpenFormatEntity> T format(String faust, Class c) throws OpenFormatConnectorException {
+    public <T extends OpenFormatElements> OpenFormatResponse<T> format(String faust, Class<T> c) throws OpenFormatConnectorException {
         return format(faust, DEFAULT_AGENCY, c);
     }
 
-    public <T extends OpenFormatEntity> T  format(String faust, String agency, Class c) throws OpenFormatConnectorException {
-        final Stopwatch stopwatch = new Stopwatch();
-        LOGGER.info("OpenFormat request with faust {} and agency {}", faust, agency);
+    public <T extends OpenFormatElements> OpenFormatResponse<T> format(String faust, String agency, Class<T> c) throws OpenFormatConnectorException {
+        try {
+            final Stopwatch stopwatch = new Stopwatch();
+            LOGGER.info("OpenFormat request with faust {} and agency {}", faust, agency);
 
-        final HttpGet httpGet = new HttpGet(failSafeHttpClient)
-                .withBaseUrl(baseUrl)
-                .withQueryParameter("action", "formatObject")
-                .withQueryParameter("outputFormat", "promat")
-                .withQueryParameter("outputType", "json")
-                .withQueryParameter("pid", String.format("%s-basis:%s", agency, faust));
+            String format = getFormatName(c);
 
+            final HttpPost httpPost = new HttpPost(failSafeHttpClient)
+                    .withBaseUrl(baseUrl)
+                    .withPathElements(FORMAT_REQUEST)
+                    .withData(new OpenFormatRequest(format, agency, faust), MediaType.APPLICATION_JSON);
 
-        T entity = sendGetRequest(httpGet, c);
-        LOGGER.info("Request took {} ms", stopwatch.getElapsedTime(TimeUnit.MILLISECONDS));
-        return entity;
+            OpenFormatResponse<T> entity = sendPostRequest(httpPost, c);
+            LOGGER.info("Request took {} ms", stopwatch.getElapsedTime(TimeUnit.MILLISECONDS));
+            LOGGER.info("Response: {}", entity);
+            return entity;
+        } catch (Exception e) {
+            throw new OpenFormatConnectorException("Caught exception while trying to send request", e);
+        }
     }
 
     public void close() {
         failSafeHttpClient.getClient().close();
     }
 
-    private <T extends OpenFormatEntity> T sendGetRequest(HttpGet httpGet, Class c) throws OpenFormatConnectorException {
-        LOGGER.info("OpenFormat query: {}", httpGet.toString());
+    private <T extends OpenFormatElements> OpenFormatResponse<T> sendPostRequest(HttpPost httpPost, Class<T> c) throws OpenFormatConnectorException, JsonProcessingException {
+        LOGGER.info("OpenFormat request: {}", httpPost.toString());
+        LOGGER.info("With data: {}", httpPost.getEntity().toString());
 
-        final Response response = httpGet.execute();
+        final Response response = httpPost.execute();
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             throw new OpenFormatConnectorException(String.format("OpenFormat returned with unexpected status code: %s",
                     response.getStatus()));
@@ -99,11 +112,14 @@ public class OpenFormatConnector {
         return readResponseEntity(response, c);
     }
 
-    private <T extends OpenFormatEntity> T  readResponseEntity(Response response, Class c) throws OpenFormatConnectorException {
-        final T entity = (T) response.readEntity(c);
-        if (entity == null) {
-            throw new OpenFormatConnectorException("OpenFormat returned with null-valued %s entity");
-        }
+    private <T extends OpenFormatElements> OpenFormatResponse<T> readResponseEntity(Response response, Class<T> c) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        OpenFormatResponse<T> entity = mapper.readValue(response.readEntity(String.class), mapper.getTypeFactory().constructParametricType(OpenFormatResponse.class, c));
+        LOGGER.info("With Result: {}", entity);
         return entity;
+    }
+
+    static <T extends OpenFormatElements> String getFormatName(Class<T> c) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return c.getDeclaredConstructor().newInstance().getName();
     }
 }

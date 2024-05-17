@@ -1,178 +1,205 @@
-/*
- * Copyright Dansk Bibliotekscenter a/s. Licensed under GPLv3
- * See license text in LICENSE.txt or at https://opensource.dbc.dk/licenses/gpl-3.0/
- */
-
 package dk.dbc.connector.openformat.model.formats.Promat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import dk.dbc.connector.openformat.model.OpenFormatDeserializer;
-import dk.dbc.connector.openformat.model.OpenFormatValue;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dk.dbc.connector.openformat.model.OpenFormatElements;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PromatElements {
+public class PromatElements implements OpenFormatElements {
 
-    private OpenFormatValue faust = new OpenFormatValue();
-    private List<OpenFormatValue> creator = new ArrayList<>();
-    private List<OpenFormatValue> dk5 = new ArrayList<>();
-    private List<OpenFormatValue> isbn = new ArrayList<>();
-    private PromatMaterialTypes materialtypes = new PromatMaterialTypes();
-    private OpenFormatValue extent = new OpenFormatValue();
-    private List<OpenFormatValue> publisher = new ArrayList<>();
-    private PromatCatalogCodes catalogcodes = new PromatCatalogCodes();
-    private OpenFormatValue title = new OpenFormatValue();
-    private List<OpenFormatValue> targetgroup = new ArrayList<>();
-    private OpenFormatValue metakompassubject = new OpenFormatValue();
+    public static class MaterialTypes {
+        private List<String> type;
 
-    public OpenFormatValue getFaust() {
+        public List<String> getType() {
+            return type;
+        }
+
+        public void setType(List<String> type) {
+            this.type = type;
+        }
+
+        public MaterialTypes withType(List<String> type) {
+            this.type = type;
+            return this;
+        }
+    }
+
+    public static class CatalogCodes {
+        private List<String> code;
+
+        public List<String> getCode() {
+            return code;
+        }
+
+        public void setCode(List<String> code) {
+            this.code = code;
+        }
+
+        public CatalogCodes withCode(List<String> code) {
+            this.code = code;
+            return this;
+        }
+    }
+
+    private List<String> faust = new ArrayList<>();
+    private List<String> isbn = new ArrayList<>();
+    private List<String> creator = new ArrayList<>();
+    private List<String> dk5 = new ArrayList<>();
+    private List<String> extent = new ArrayList<>();
+    private List<String> publisher = new ArrayList<>();
+    private List<String> title = new ArrayList<>();
+    @JsonProperty("targetgroup")
+    private List<String> targetGroup = new ArrayList<>();
+    @JsonProperty("metakompassubject")
+    private List<String> metakompasSubject = new ArrayList<>();
+    @JsonProperty("materialtypes")
+    private MaterialTypes materialTypes;
+    @JsonProperty("catalogcodes")
+    private CatalogCodes catalogCodes;
+
+    public List<String> getFaust() {
         return faust;
     }
 
-    public void setFaust(OpenFormatValue faust) {
+    public void setFaust(List<String> faust) {
         this.faust = faust;
     }
 
-    public PromatElements withFaust(OpenFormatValue faust) {
+    public PromatElements withFaust(List<String> faust) {
         this.faust = faust;
         return this;
     }
 
-    public List<OpenFormatValue> getCreator() {
-        return creator;
-    }
-
-    @JsonDeserialize(using = OpenFormatDeserializer.class)
-    public void setCreator(List<OpenFormatValue> creator) {
-        this.creator = creator;
-    }
-
-    public PromatElements withCreator(List<OpenFormatValue> creator) {
-        this.creator = creator;
-        return this;
-    }
-
-    public List<OpenFormatValue> getDk5() {
-        return dk5;
-    }
-
-    @JsonDeserialize(using = OpenFormatDeserializer.class)
-    public void setDk5(List<OpenFormatValue> dk5) {
-        this.dk5 = dk5;
-    }
-
-    public PromatElements withDk5(List<OpenFormatValue> dk5) {
-        this.dk5 = dk5;
-        return this;
-    }
-
-    public List<OpenFormatValue> getIsbn() {
+    public List<String> getIsbn() {
         return isbn;
     }
 
-    @JsonDeserialize(using = OpenFormatDeserializer.class)
-    public void setIsbn(List<OpenFormatValue> isbn) {
+    public void setIsbn(List<String> isbn) {
         this.isbn = isbn;
     }
 
-    public PromatElements withIsbn(List<OpenFormatValue> isbn) {
+    public PromatElements withIsbn(List<String> isbn) {
         this.isbn = isbn;
         return this;
     }
 
-    public PromatMaterialTypes getMaterialtypes() {
-        return materialtypes;
+    public List<String> getCreator() {
+        return creator;
     }
 
-    public void setMaterialtypes(PromatMaterialTypes materialtypes) {
-        this.materialtypes = materialtypes;
+    public void setCreator(List<String> creator) {
+        this.creator = creator;
     }
 
-    public PromatElements withMaterialtypes(PromatMaterialTypes materialtypes) {
-        this.materialtypes = materialtypes;
+    public PromatElements withCreator(List<String> creator) {
+        this.creator = creator;
         return this;
     }
 
-    public OpenFormatValue getExtent() {
+    public List<String> getDk5() {
+        return dk5;
+    }
+
+    public void setDk5(List<String> dk5) {
+        this.dk5 = dk5;
+    }
+
+    public PromatElements withDk5(List<String> dk5) {
+        this.dk5 = dk5;
+        return this;
+    }
+
+    public List<String> getExtent() {
         return extent;
     }
 
-    public void setExtent(OpenFormatValue extent) {
+    public void setExtent(List<String> extent) {
         this.extent = extent;
     }
 
-    public PromatElements withExtent(OpenFormatValue extent) {
+    public PromatElements withExtent(List<String> extent) {
         this.extent = extent;
         return this;
     }
 
-    public List<OpenFormatValue> getPublisher() {
+    public List<String> getPublisher() {
         return publisher;
     }
 
-    @JsonDeserialize(using = OpenFormatDeserializer.class)
-    public void setPublisher(List<OpenFormatValue> publisher) {
+    public void setPublisher(List<String> publisher) {
         this.publisher = publisher;
     }
 
-    public PromatElements withPublisher(List<OpenFormatValue> publisher) {
+    public PromatElements withPublisher(List<String> publisher) {
         this.publisher = publisher;
         return this;
     }
 
-    public PromatCatalogCodes getCatalogcodes() {
-        return catalogcodes;
-    }
-
-    public void setCatalogcodes(PromatCatalogCodes catalogcodes) {
-        this.catalogcodes = catalogcodes;
-    }
-
-    public PromatElements withCatalogcodes(PromatCatalogCodes catalogcodes) {
-        this.catalogcodes = catalogcodes;
-        return this;
-    }
-
-    public OpenFormatValue getTitle() {
+    public List<String> getTitle() {
         return title;
     }
 
-    public void setTitle(OpenFormatValue title) {
+    public void setTitle(List<String> title) {
         this.title = title;
     }
 
-    public PromatElements withTitle(OpenFormatValue title) {
+    public PromatElements withTitle(List<String> title) {
         this.title = title;
         return this;
     }
 
-    public List<OpenFormatValue> getTargetgroup() {
-        return targetgroup;
+    public List<String> getTargetGroup() {
+        return targetGroup;
     }
 
-    @JsonDeserialize(using = OpenFormatDeserializer.class)
-    public void setTargetgroup(List<OpenFormatValue> targetgroup) {
-        this.targetgroup = targetgroup;
+    public void setTargetGroup(List<String> targetGroup) {
+        this.targetGroup = targetGroup;
     }
 
-    public PromatElements withTargetgroup(List<OpenFormatValue> targetgroup) {
-        this.targetgroup = targetgroup;
+    public PromatElements withTargetgroup(List<String> targetgroup) {
+        this.targetGroup = targetgroup;
         return this;
     }
 
-    public OpenFormatValue getMetakompassubject() {
-        return metakompassubject;
+    public List<String> getMetakompasSubject() {
+        return metakompasSubject;
     }
 
-    public void setMetakompassubject(OpenFormatValue metakompassubject) {
-        this.metakompassubject = metakompassubject;
+    public void setMetakompasSubject(List<String> metakompasSubject) {
+        this.metakompasSubject = metakompasSubject;
     }
 
-    public PromatElements withMetakompassubject(OpenFormatValue metakompassubject) {
-        this.metakompassubject = metakompassubject;
+    public PromatElements withMetakompassubject(List<String> metakompassubject) {
+        this.metakompasSubject = metakompassubject;
+        return this;
+    }
+
+    public MaterialTypes getMaterialTypes() {
+        return materialTypes;
+    }
+
+    public void setMaterialTypes(MaterialTypes materialTypes) {
+        this.materialTypes = materialTypes;
+    }
+
+    public PromatElements withMaterialTypes(MaterialTypes materialTypes) {
+        this.materialTypes = materialTypes;
+        return this;
+    }
+
+    public CatalogCodes getCatalogCodes() {
+        return catalogCodes;
+    }
+
+    public void setCatalogCodes(CatalogCodes catalogCodes) {
+        this.catalogCodes = catalogCodes;
+    }
+
+    public PromatElements withCatalogCodes(CatalogCodes catalogCodes) {
+        this.catalogCodes = catalogCodes;
         return this;
     }
 
@@ -180,16 +207,21 @@ public class PromatElements {
     public String toString() {
         return "PromatElements{" +
                 "faust=" + faust +
+                ", isbn=" + isbn +
                 ", creator=" + creator +
                 ", dk5=" + dk5 +
-                ", isbn=" + isbn +
-                ", materialtypes=" + materialtypes +
                 ", extent=" + extent +
                 ", publisher=" + publisher +
-                ", catalogcodes=" + catalogcodes +
                 ", title=" + title +
-                ", targetgroup=" + targetgroup +
-                ", metakompassubject=" + metakompassubject +
+                ", targetGroup=" + targetGroup +
+                ", metakompasSubject=" + metakompasSubject +
+                ", materialTypes=" + materialTypes +
+                ", catalogCodes=" + catalogCodes +
                 '}';
+    }
+
+    @Override
+    public String getName() {
+        return "promat";
     }
 }
