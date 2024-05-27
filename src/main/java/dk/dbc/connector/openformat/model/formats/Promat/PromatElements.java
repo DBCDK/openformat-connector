@@ -25,6 +25,13 @@ public class PromatElements implements OpenFormatElements {
             this.type = type;
             return this;
         }
+
+        @Override
+        public String toString() {
+            return "MaterialTypes{" +
+                    "type=" + type +
+                    '}';
+        }
     }
 
     public static class CatalogCodes {
@@ -41,6 +48,13 @@ public class PromatElements implements OpenFormatElements {
         public CatalogCodes withCode(List<String> code) {
             this.code = code;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return "CatalogCodes{" +
+                    "code=" + code +
+                    '}';
         }
     }
 
