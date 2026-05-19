@@ -1,6 +1,6 @@
 #!groovy
 
-def workerNode = "devel10"
+def workerNode = "devel12"
 
 pipeline {
 	agent {label workerNode}
@@ -11,6 +11,13 @@ pipeline {
 	options {
 		timestamps()
 	}
+	environment {
+        SONAR_SCANNER_HOME = tool 'SonarQube Scanner from Maven Central'
+        SONAR_SCANNER = "$SONAR_SCANNER_HOME/bin/sonar-scanner"
+        SONAR_PROJECT_KEY = "openformat-connector"
+        SONAR_SOURCES = "src"
+        SONAR_TESTS = "test"
+    }
 	stages {
 		stage("clear workspace") {
 			steps {
@@ -24,6 +31,31 @@ pipeline {
 				junit "target/surefire-reports/TEST-*.xml"
 			}
 		}
+		stage("sonarqube") {
+            steps {
+                ansiColor('xterm') {
+                    withSonarQubeEnv(installationName: 'sonarqube.dbc.dk') {
+                        script {
+                            def status = 0
+
+                            def sonarOptions = "-Dsonar.branch.name=${BRANCH_NAME}"
+                            if (env.BRANCH_NAME != 'main') {
+                                sonarOptions += " -Dsonar.newCode.referenceBranch=master"
+                            }
+
+                            // Do sonar via maven
+                            status += sh returnStatus: true, script: """
+                                mvn -B -Dmaven.repo.local=$WORKSPACE/.repo --no-transfer-progress $sonarOptions sonar:sonar
+                            """
+
+                            if (status != 0) {
+                                error("build failed")
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		stage("warnings") {
 			agent {label workerNode}
 			steps {
