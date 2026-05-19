@@ -25,9 +25,9 @@ pipeline {
 				checkout scm
 			}
 		}
-		stage("verify") {
+		stage("build") {
 			steps {
-				sh "mvn verify pmd:pmd"
+			    sh "mvn -T 4 verify pmd:pmd pmd:cpd spotbugs:spotbugs"
 				junit "target/surefire-reports/TEST-*.xml"
 			}
 		}
@@ -75,6 +75,14 @@ pipeline {
 					  failedTotalAll: "0"])
 			}
 		}
+		stage("quality gate") {
+            steps {
+                // wait for analysis results
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 		stage("deploy") {
 			when {
 				branch "master"
