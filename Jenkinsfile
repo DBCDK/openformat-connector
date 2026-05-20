@@ -35,7 +35,7 @@ pipeline {
                             def status = 0
 
                             def sonarOptions = "-Dsonar.branch.name=${BRANCH_NAME}"
-                            if (env.BRANCH_NAME != 'main') {
+                            if (env.BRANCH_NAME != 'master') {
                                 sonarOptions += " -Dsonar.newCode.referenceBranch=master"
                             }
 
