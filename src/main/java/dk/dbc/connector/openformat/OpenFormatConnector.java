@@ -2,6 +2,7 @@ package dk.dbc.connector.openformat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.dbc.commons.useragent.UserAgent;
 import dk.dbc.connector.openformat.model.OpenFormatElements;
 import dk.dbc.connector.openformat.model.OpenFormatRequest;
 import dk.dbc.connector.openformat.model.OpenFormatResponse;
@@ -40,6 +41,8 @@ public class OpenFormatConnector {
 
     private static final String FORMAT_REQUEST = "format";
 
+    private static final UserAgent USER_AGENT = new UserAgent("OpenFormatConnector");
+
     private static final RetryPolicy<Response> RETRY_POLICY = new RetryPolicy<Response>()
             .handle(ProcessingException.class)
             .handleResultIf(response ->
@@ -52,7 +55,7 @@ public class OpenFormatConnector {
     private final String baseUrl;
 
     public OpenFormatConnector(Client httpClient, String baseUrl) {
-        this(FailSafeHttpClient.create(httpClient, RETRY_POLICY), baseUrl);
+        this(FailSafeHttpClient.create(httpClient, USER_AGENT, RETRY_POLICY), baseUrl);
     }
 
     /**
